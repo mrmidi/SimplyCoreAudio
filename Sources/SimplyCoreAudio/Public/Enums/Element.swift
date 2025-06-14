@@ -6,7 +6,6 @@
 
 import CoreAudio
 import Foundation
-@_implementationOnly import SimplyCoreAudioC
 
 public enum Element {
     case main
