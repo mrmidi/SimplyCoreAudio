@@ -54,10 +54,11 @@ file(GLOB_RECURSE SIMPLYCOREAUDIOC_SOURCES
 if(SIMPLYCOREAUDIOC_SOURCES)
     add_library(SimplyCoreAudioC STATIC ${SIMPLYCOREAUDIOC_SOURCES})
     
-    # Set include directories for the C library
+    # Set include directories for the C library using generator expressions
     target_include_directories(SimplyCoreAudioC
         PUBLIC
-            Sources/SimplyCoreAudioC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Sources/SimplyCoreAudioC>
+            $<INSTALL_INTERFACE:include>
     )
     
     # Link SimplyCoreAudioC to SimplyCoreAudio
@@ -115,7 +116,7 @@ if(SIMPLYCOREAUDIO_TEST_SOURCES)
     add_test(NAME SimplyCoreAudioSuite COMMAND SimplyCoreAudioTests)
 endif()
 
-# Optional: Installation rules
+# Installation rules
 install(TARGETS SimplyCoreAudio
     EXPORT SimplyCoreAudioTargets
     LIBRARY DESTINATION lib
@@ -138,6 +139,21 @@ if(TARGET SimplyCoreAudioC)
     )
 endif()
 
+# Install the Atomics target if we created it
+if(TARGET Atomics)
+    # Get the target type to determine if it should be installed
+    get_target_property(ATOMICS_TYPE Atomics TYPE)
+    if(NOT ATOMICS_TYPE STREQUAL "INTERFACE_LIBRARY")
+        install(TARGETS Atomics
+            EXPORT SimplyCoreAudioTargets
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION include
+        )
+    endif()
+endif()
+
 # Export the targets
 install(EXPORT SimplyCoreAudioTargets
     FILE SimplyCoreAudioTargets.cmake
@@ -147,6 +163,14 @@ install(EXPORT SimplyCoreAudioTargets
 
 # Create a config file
 include(CMakePackageConfigHelpers)
+
+# Create the config file
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/SimplyCoreAudioConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/SimplyCoreAudioConfig.cmake"
+    INSTALL_DESTINATION lib/cmake/SimplyCoreAudio
+)
+
 write_basic_package_version_file(
     "SimplyCoreAudioConfigVersion.cmake"
     VERSION 1.0.0
@@ -154,6 +178,7 @@ write_basic_package_version_file(
 )
 
 install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/SimplyCoreAudioConfig.cmake"
     "SimplyCoreAudioConfigVersion.cmake"
     DESTINATION lib/cmake/SimplyCoreAudio
 )
