@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 3.26)
 project(SimplyCoreAudio LANGUAGES Swift)
 
 include(FetchContent)
-FetchContent_Declare(
-    swift-atomics
-    GIT_REPOSITORY https://github.com/apple/swift-atomics.git
-    GIT_TAG        1.3.0
-)
-FetchContent_MakeAvailable(swift-atomics)
+
+# Only fetch swift-atomics if Atomics target doesn't already exist
+if(NOT TARGET Atomics)
+    FetchContent_Declare(
+        swift-atomics
+        GIT_REPOSITORY https://github.com/apple/swift-atomics.git
+        GIT_TAG        1.3.0
+    )
+    FetchContent_MakeAvailable(swift-atomics)
+endif()
 
 file(GLOB_RECURSE SIMPLYCOREAUDIO_SOURCES
     "Sources/SimplyCoreAudio/*.swift"
@@ -37,4 +41,3 @@ if(SIMPLYCOREAUDIO_TEST_SOURCES)
     enable_testing()
     add_test(NAME SimplyCoreAudioSuite COMMAND SimplyCoreAudioTests)
 endif()
-
