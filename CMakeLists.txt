@@ -41,7 +41,7 @@ set_target_properties(SimplyCoreAudio PROPERTIES
 
 # Link against the Atomics package and system frameworks
 target_link_libraries(SimplyCoreAudio
-    PUBLIC
+    PRIVATE
         Atomics
 )
 
@@ -137,21 +137,6 @@ if(TARGET SimplyCoreAudioC)
     install(FILES Sources/SimplyCoreAudioC/SimplyCoreAudio.h
         DESTINATION include
     )
-endif()
-
-# Install the Atomics target if we created it
-if(TARGET Atomics)
-    # Get the target type to determine if it should be installed
-    get_target_property(ATOMICS_TYPE Atomics TYPE)
-    if(NOT ATOMICS_TYPE STREQUAL "INTERFACE_LIBRARY")
-        install(TARGETS Atomics
-            EXPORT SimplyCoreAudioTargets
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib
-            RUNTIME DESTINATION bin
-            INCLUDES DESTINATION include
-        )
-    endif()
 endif()
 
 # Export the targets
