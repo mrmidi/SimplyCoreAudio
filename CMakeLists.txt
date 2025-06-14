@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     swift-atomics
     GIT_REPOSITORY https://github.com/apple/swift-atomics.git
-    GIT_TAG        1.0.0
+    GIT_TAG        1.3.0
 )
 FetchContent_MakeAvailable(swift-atomics)
 
@@ -13,7 +13,7 @@ file(GLOB_RECURSE SIMPLYCOREAUDIO_SOURCES
     "Sources/SimplyCoreAudio/*.swift"
 )
 
-add_library(SimplyCoreAudio ${SIMPLYCOREAUDIO_SOURCES})
+add_library(SimplyCoreAudio STATIC ${SIMPLYCOREAUDIO_SOURCES})
 
 # Link against the Atomics package
 # CoreAudio and related frameworks are expected to be provided by the host system
