@@ -1,28 +1,14 @@
 cmake_minimum_required(VERSION 3.26)
 project(SimplyCoreAudio LANGUAGES Swift)
 
-include(FetchContent)
-
 # Set some policies for better Swift support
 if(POLICY CMP0157)
     cmake_policy(SET CMP0157 NEW)  # Swift compilation mode support
 endif()
 
-# Only fetch swift-atomics if Atomics target doesn't already exist
+# Require Atomics target to be provided by the consuming project
 if(NOT TARGET Atomics)
-    FetchContent_Declare(
-        swift-atomics
-        GIT_REPOSITORY https://github.com/apple/swift-atomics.git
-        GIT_TAG        1.3.0
-    )
-    
-    # Make the content available but don't add to ALL target by default
-    FetchContent_MakeAvailable(swift-atomics)
-    
-    # Verify that the Atomics target was created
-    if(NOT TARGET Atomics)
-        message(FATAL_ERROR "Failed to create Atomics target from swift-atomics")
-    endif()
+    message(FATAL_ERROR "SimplyCoreAudio requires the 'Atomics' target from swift-atomics. Please ensure swift-atomics is available before including SimplyCoreAudio.")
 endif()
 
 # Collect all Swift source files
